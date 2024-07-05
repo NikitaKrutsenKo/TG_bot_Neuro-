@@ -1,32 +1,55 @@
-from aiogram import Router
-from aiogram.types import Message
+from aiogram import Router, F
+from aiogram.types import Message, CallbackQuery
 from aiogram.filters import Command
-from .keyboards import (
-main_features_keyboard, 
-main_features_list,
-neuro_type_list
-)
+
+import bot_logic.keyboards as kb
+import bot_logic.database.requests as rq
+
+import re
 
 router = Router()
 
 @router.message(Command('start'))
 async def send_welcome(message: Message):
-    await message.reply("Привіт, це тестова версія кнопок, виберіть задачу:", reply_markup = main_features_keyboard)
+    await rq.set_user(message.from_user.id)
+    await message.reply("Привіт, це тестова версія кнопок, виберіть задачу:", reply_markup = kb.main_features_keyboard)
 
 
-@router.message(lambda message: message.text in main_features_list)
-async def send_feature_menu(message: Message):
-    feature_type = main_features_list.get(message.text, None)
-    if feature_type != None:
-        await message.answer('Ви перейшли у меню задачі '+ message.text + '. Оберіть наступну дію', reply_markup = feature_type)
+#===============================================================Пункти головного меню
+@router.message(lambda message: message.text in kb.main_features_list)
+async def features_list(message: Message):
+    feature = kb.main_features_list.get(message.text, None)
+    if feature:
+        await message.answer(' Ви обрали ' + message.text, reply_markup = await feature())
     else:
-        await message.answer('Або такої задачі нема, або сталася помилка. Спробуйте ще раз')
+        await message.answer('Сталася помилка, спробуйте ще раз')
+
+#===============================================================
+
+#===============================================================Нейронки
+@router.callback_query(F.data.startswith('neuro_type_'))
+async def show_neyro_types(callback : CallbackQuery):
+
+    neyro_type_id = int(re.search(r'\d+', callback.data).group())
+    neyro_type = await rq.get_neuro_type_by_id(neyro_type_id)
+    if neyro_type:
+        await callback.answer(None)
+        await callback.message.answer('Ви обрали категорію '+ neyro_type.name, reply_markup=await kb.networks_by_type_keyboard(neyro_type_id))
+    else:
+        await callback.answer(None)
+        await callback.message.answer('Сталася помилка, спробуйте ще раз')
 
 
-@router.message(lambda message: message.text in neuro_type_list)
-async def send_topic_message(message: Message):
-    neuro_type_message = neuro_type_list.get(message.text, "Тема не знайдена")
-    await message.reply(neuro_type_message, parse_mode='Markdown')
-
-
+@router.callback_query(F.data.startswith('network_'))
+async def show_neural_network_info(callback: CallbackQuery):
+    neural_network_id = int(re.search(r'\d+', callback.data).group())
+    neural_network = await rq.get_neuro_by_id(neural_network_id)
+    if neural_network:
+        await callback.answer(None)
+        await callback.message.answer('Назва: ' + neural_network.name + '\n'
+                                    'Опис: \n' + neural_network.description)
+    else:
+        await callback.answer(None)
+        await callback.message.answer('Сталася помилка, спробуйте ще раз')
+#===============================================================
 
