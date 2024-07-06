@@ -1,9 +1,10 @@
 from aiogram import Router, F
-from aiogram.types import Message, CallbackQuery
 from aiogram.filters import Command
+from aiogram.types import Message, CallbackQuery
 
 import bot_logic.keyboards as kb
 import bot_logic.database.requests as rq
+import bot_logic.admin_handlers as admin_handlers
 
 import re
 
@@ -12,7 +13,8 @@ router = Router()
 @router.message(Command('start'))
 async def send_welcome(message: Message):
     await rq.set_user(message.from_user.id)
-    await message.reply("Привіт, це тестова версія кнопок, виберіть задачу:", reply_markup = kb.main_features_keyboard)
+    await message.reply("Доброї днини, пункти головного меню перед вами " + "\nякщо ви адмін, то пропишіть:\n /start_admin"
+                        , reply_markup = kb.main_features_keyboard)
 
 
 #===============================================================Пункти головного меню
@@ -43,7 +45,7 @@ async def show_neyro_types(callback : CallbackQuery):
 @router.callback_query(F.data.startswith('network_'))
 async def show_neural_network_info(callback: CallbackQuery):
     neural_network_id = int(re.search(r'\d+', callback.data).group())
-    neural_network = await rq.get_neuro_by_id(neural_network_id)
+    neural_network = await rq.get_network_by_id(neural_network_id)
     if neural_network:
         await callback.answer(None)
         await callback.message.answer('Назва: ' + neural_network.name + '\n'
