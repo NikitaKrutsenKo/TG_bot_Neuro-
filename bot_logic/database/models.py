@@ -35,7 +35,7 @@ class NeuralNetwork(Base):
     name : Mapped[str] = mapped_column(String(30))
     description : Mapped[str] = mapped_column(String(300), nullable=True)
     neuro_type : Mapped[int] = mapped_column(ForeignKey('neuro_types.id', ondelete='SET NULL'), nullable=True)
-    nuero_video_tutorial : Mapped[str] = mapped_column(String(120), nullable=True)    
+    neuro_video_tutorial : Mapped[str] = mapped_column(String(120), nullable=True)    
     neuro_message_ref : Mapped[str] = mapped_column(String(120), nullable=True)
     neuro_ref : Mapped[str] = mapped_column(String(120))
     is_available : Mapped[bool] = mapped_column()

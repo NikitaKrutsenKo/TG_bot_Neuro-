@@ -48,8 +48,10 @@ async def show_neural_network_info(callback: CallbackQuery):
     neural_network = await rq.get_network_by_id(neural_network_id)
     if neural_network:
         await callback.answer(None)
-        await callback.message.answer('Назва: ' + neural_network.name + '\n'
-                                    'Опис: \n' + neural_network.description)
+        await callback.message.answer(
+        '#Назва: \n' + neural_network.name + '\n\n' +
+        '#Опис: \n' + neural_network.description + '\n\n' +
+        '#Посилання: \n' + neural_network.neuro_ref)
     else:
         await callback.answer(None)
         await callback.message.answer('Сталася помилка, спробуйте ще раз')

@@ -78,20 +78,20 @@ async def neuro_type_create(message: Message, state: FSMContext):
         await session.commit()
         await session.refresh(new_type)  # Оновлюємо об'єкт для отримання згенерованого ID
         new_type_id = new_type.id
-        state.update_data(neuro_type = new_type_id)
+        await state.update_data(neuro_type = new_type_id)
         
 
-    await state.set_state(admin_states.CreateNewNeuro.nuero_video_tutorial)
+    await state.set_state(admin_states.CreateNewNeuro.neuro_video_tutorial)
     await message.answer('Введіть посилання на відос з ютубу якщо таке є, якщо нема то відправте просто крапку -> .')
 
 
-@admin_router.message(admin_states.CreateNewNeuro.nuero_video_tutorial)
+@admin_router.message(admin_states.CreateNewNeuro.neuro_video_tutorial)
 async def neuro_video_added(message: Message, state: FSMContext):
     vid_ref = message.text.strip()
     if vid_ref != '.':
-        await state.update_data(nuero_video_tutorial = message.text)
+        await state.update_data(neuro_video_tutorial = message.text)
     else:
-        await state.update_data(nuero_video_tutorial = None)
+        await state.update_data(neuro_video_tutorial = None)
     await state.set_state(admin_states.CreateNewNeuro.neuro_message_ref)    
     await message.answer('Тепер надайте посилання на повідомлення з детільним поясненням роботи з нейронкою' +
     'якщо такого нема, то напишіть просто крапку -> .')
@@ -131,11 +131,12 @@ async def neuro_is_available_added(message: Message, state: FSMContext):
 async def create_neuro_with_user_info(state: FSMContext):
     async with async_session() as session:
         data = await state.get_data()
+        t = data["neuro_type"]
         new_neuro = NeuralNetwork(
         name=data["name"],
         description=data["description"],
         neuro_type=data["neuro_type"],
-        nuero_video_tutorial=data["nuero_video_tutorial"],
+        neuro_video_tutorial=data["neuro_video_tutorial"],
         neuro_message_ref=data["neuro_message_ref"],
         neuro_ref = data["neuro_ref"],
         is_available=data["is_available"])
