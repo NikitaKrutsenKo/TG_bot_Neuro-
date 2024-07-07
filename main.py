@@ -7,6 +7,7 @@ from bot_logic.database.models import async_db_create
 from globals import TOKEN
 from keep_alive import keep_alive
 
+
 keep_alive()
 
 
