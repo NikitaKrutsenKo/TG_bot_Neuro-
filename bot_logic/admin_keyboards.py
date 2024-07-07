@@ -13,6 +13,14 @@ async def choose_neuro_types_keyboard():
     return keyboard.adjust(1).as_markup()
 
 
+async def delete_neuro_type_keyboard():
+    all_types = await rq.get_neuro_types()
+    keyboard = InlineKeyboardBuilder()
+    for t in all_types:
+        keyboard.add(InlineKeyboardButton(text=t.name, callback_data=f'delete_neuro_type_{t.id}'))
+    return keyboard.adjust(1).as_markup()
+
+
 async def update_neuro_networks_keyboard():
     all_networks = await rq.get_all_networks()
     keyboard = InlineKeyboardBuilder()
@@ -20,9 +28,20 @@ async def update_neuro_networks_keyboard():
         keyboard.add(InlineKeyboardButton(text=n.name, callback_data=f"start_update_neuro_{n.id}"))
     return keyboard.adjust(1).as_markup()
 
+async def delete_neuro_networks_keyboard():
+    all_networks = await rq.get_all_networks()
+    keyboard = InlineKeyboardBuilder()
+    for n in all_networks:
+        keyboard.add(InlineKeyboardButton(text=n.name, callback_data=f"delete_neuro_network_{n.id}"))
+    return keyboard.adjust(1).as_markup()
+
 
 async def all_network_info(network : models.NeuralNetwork):
-    neuro_type_name = await rq.get_neuro_type_by_id(network.neuro_type)
+    neuro_type = await rq.get_neuro_type_by_id(network.neuro_type)
+    neuro_type_name = None
+    if neuro_type != None:
+        neuro_type_name = neuro_type.name
+
     keyboard = InlineKeyboardBuilder()    
     keyboard.add(InlineKeyboardButton(text=f'#Назва: {network.name}', 
     callback_data="update_neuro_name"))
@@ -30,7 +49,7 @@ async def all_network_info(network : models.NeuralNetwork):
     keyboard.add(InlineKeyboardButton(text=f'#Опис: {truncate_string(network.description)}', 
     callback_data="update_neuro_description"))
 
-    keyboard.add(InlineKeyboardButton(text=f'#Тип: {neuro_type_name.name}', 
+    keyboard.add(InlineKeyboardButton(text=f'#Тип: {neuro_type_name}', 
     callback_data="update_neuro_type"))
 
     keyboard.add(InlineKeyboardButton(text=f'#Відео-тутор: {network.neuro_video_tutorial}', 

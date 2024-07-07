@@ -1,9 +1,9 @@
 from bot_logic.database.models import User, NeuroType, NeuralNetwork
 from bot_logic.database.models import async_session
-from sqlalchemy import select, update
+from sqlalchemy import select, update, delete
 
 
-#=============================================================== Користувачі cr(ud)
+#=============================================================== Користувачі cru(d)
 async def set_user(telegram_id: int):
     async with async_session() as session:
         async with session.begin():            
@@ -158,7 +158,7 @@ async def update_network_neuro_ref(network_id: int, new_ref: str):
             await session.commit()
 
 
-async def update_network_is_available(network_id: int, new_available: bool):
+async def update_network_is_available(network_id : int, new_available: bool):
     async with async_session() as session:
         async with session.begin():
             await session.execute(
@@ -168,6 +168,35 @@ async def update_network_is_available(network_id: int, new_available: bool):
             )
             
             await session.commit()
+#===============================================================
+
+#=============================================================== Видалення типу нейронки
+
+async def delete_network(network_id : int):
+    async with async_session() as session:
+        async with session.begin():
+            await session.execute(
+                delete(NeuralNetwork)
+                .where(NeuralNetwork.id == network_id)
+            )
+            
+            await session.commit()
+
+#===============================================================
+
+
+#=============================================================== Видалення нейронки
+
+async def delete_type(network_type_id : int):
+    async with async_session() as session:
+        async with session.begin():
+            await session.execute(
+                delete(NeuroType)
+                .where(NeuroType.id == network_type_id)
+            )
+            
+            await session.commit()
+
 #===============================================================
 
 

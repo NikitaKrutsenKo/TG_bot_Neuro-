@@ -26,3 +26,12 @@ class UpdateNeuro(StatesGroup):
     update_neuro_message_ref = State()
     update_neuro_ref = State()
     update_is_available = State()
+
+
+class DeleteNeuro(StatesGroup):
+    confirm_neuro_delete = State()
+
+
+class DelteNeuroType(StatesGroup):
+    confirm_neuro_type_delete = State()
+

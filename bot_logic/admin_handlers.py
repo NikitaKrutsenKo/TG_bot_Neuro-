@@ -32,7 +32,9 @@ async def help_admin(message: Message):
     await message.reply(
     'Адмін-панель до ваших послуг, ' + message.from_user.full_name + '\n' +
     '/add_new_neuro - додати нову нейронку\n' + 
-    '/edit_neuro - змінити якусь конкретну нейронку')
+    '/edit_neuro - змінити якусь конкретну нейронку\n' +
+    '/delete_neuro_type - видалити тип нейронки\n' +
+    '/delete_neuro - видалити конкретну нейронку\n')
 
 
 #=============================================================== Процес створення нової нейронки
@@ -298,5 +300,63 @@ async def set_new_neuro_available(message: Message, state: FSMContext):
     await rq.update_network_is_available(network_id, is_available)
     await message.answer('Доступ до читання оновлено')
 #===========================
+
+#===============================================================
+
+#=============================================================== Видалення типу нейронки
+
+@admin_router.message(Command('delete_neuro_type'), AdminFilter())
+async def get_neuro_type_for_delete(message : Message):
+    await message.answer('Оберіть тип нейронки, який хочете видалити', reply_markup= await admin_keyboards.delete_neuro_type_keyboard())
+
+
+@admin_router.callback_query(F.data.startswith('delete_neuro_type_'))
+async def confirm_neuro_type_delete(callback : CallbackQuery, state : FSMContext):
+    neuro_type_id = int(re.search(r'\d+', callback.data).group())
+    await state.update_data(delete_neuro_type = neuro_type_id)
+    await state.set_state(admin_states.DelteNeuroType.confirm_neuro_type_delete)
+    await callback.message.answer('Напишіть \'так\', щоб підтвердити видалення, або \'ні\', щоб скасувати')
+
+
+@admin_router.message(admin_states.DelteNeuroType.confirm_neuro_type_delete)
+async def delete_neuro_type(message : Message, state :FSMContext):
+    message_answer = message.text.strip().lower()
+    if message_answer == 'так':
+        data = await state.get_data()
+        await rq.delete_type(data["delete_neuro_type"])
+        await message.answer('Тип видалено')
+    elif message_answer == 'ні':
+        await message.answer('Видалення типу скасовано')
+    await state.clear()
+    
+
+#===============================================================
+
+#=============================================================== Видалення нейронки
+
+@admin_router.message(Command('delete_neuro'), AdminFilter())
+async def get_neuro_type_for_delete(message : Message):
+    await message.answer('Оберіть нейронку, яку хочете видалити', reply_markup= await admin_keyboards.delete_neuro_networks_keyboard())
+
+
+@admin_router.callback_query(F.data.startswith('delete_neuro_network_'))
+async def confirm_neuro_type_delete(callback : CallbackQuery, state : FSMContext):
+    neuro_id = int(re.search(r'\d+', callback.data).group())
+    await state.update_data(delete_neuro = neuro_id)
+    await state.set_state(admin_states.DeleteNeuro.confirm_neuro_delete)
+    await callback.message.answer('Напишіть \'так\', щоб підтвердити видалення, або \'ні\', щоб скасувати')
+
+
+@admin_router.message(admin_states.DeleteNeuro.confirm_neuro_delete)
+async def delete_neuro_type(message : Message, state :FSMContext):
+    message_answer = message.text.strip().lower()
+    if message_answer == 'так':
+        data = await state.get_data()
+        await rq.delete_network(data["delete_neuro"])
+        await message.answer('Нейронку видалено')
+    elif message_answer == 'ні':
+        await message.answer('Видалення нейронки скасовано')
+    await state.clear()
+    
 
 #===============================================================
