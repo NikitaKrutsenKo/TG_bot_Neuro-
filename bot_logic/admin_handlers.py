@@ -313,6 +313,7 @@ async def get_neuro_type_for_delete(message : Message):
 @admin_router.callback_query(F.data.startswith('delete_neuro_type_'))
 async def confirm_neuro_type_delete(callback : CallbackQuery, state : FSMContext):
     neuro_type_id = int(re.search(r'\d+', callback.data).group())
+    await callback.answer(None)
     await state.update_data(delete_neuro_type = neuro_type_id)
     await state.set_state(admin_states.DelteNeuroType.confirm_neuro_type_delete)
     await callback.message.answer('Напишіть \'так\', щоб підтвердити видалення, або \'ні\', щоб скасувати')
@@ -342,6 +343,7 @@ async def get_neuro_type_for_delete(message : Message):
 @admin_router.callback_query(F.data.startswith('delete_neuro_network_'))
 async def confirm_neuro_type_delete(callback : CallbackQuery, state : FSMContext):
     neuro_id = int(re.search(r'\d+', callback.data).group())
+    await callback.answer(None)
     await state.update_data(delete_neuro = neuro_id)
     await state.set_state(admin_states.DeleteNeuro.confirm_neuro_delete)
     await callback.message.answer('Напишіть \'так\', щоб підтвердити видалення, або \'ні\', щоб скасувати')
