@@ -136,7 +136,7 @@ async def create_neuro_with_user_info(state: FSMContext):
         neuro_message_ref=data["neuro_message_ref"],
         neuro_ref = data["neuro_ref"],
         is_available=data["is_available"])
-        await rq.write_network_to_DB(new_neuro)
+        await rq.write_neuro_to_DB(new_neuro)
 
 #===============================================================
 
@@ -150,7 +150,7 @@ async def choose_neuro_to_edit(message : Message):
 @admin_router.callback_query(F.data.startswith("start_update_neuro_"))
 async def start_network_update(callback : CallbackQuery, state : FSMContext):
     update_network_id = int(re.search(r'\d+', callback.data).group())
-    update_network = await rq.get_network_by_id(update_network_id)
+    update_network = await rq.get_neuro_by_id(update_network_id)
     await state.set_state(admin_states.UpdateNeuro.update_start)
     await state.update_data(network_id = update_network_id)
     await callback.answer(None)
@@ -169,7 +169,7 @@ async def get_new_neuro_name(callback : CallbackQuery, state : FSMContext):
 async def set_new_neuro_name(message : Message, state : FSMContext):    
     data = await state.get_data()
     network_id = data["network_id"]
-    await rq.update_network_name(network_id, message.text)
+    await rq.update_neuro_name(network_id, message.text)
     await state.clear()
     await message.answer("Назву змінено")
 #===========================
@@ -186,7 +186,7 @@ async def get_new_neuro_description(callback : CallbackQuery, state : FSMContext
 async def set_new_neuro_description(message : Message, state : FSMContext):    
     data = await state.get_data()
     network_id = data["network_id"]
-    await rq.update_network_description(network_id, message.text)
+    await rq.update_neuro_description(network_id, message.text)
     await state.clear()
     await message.answer("Опис змінено")
 #===========================
@@ -209,7 +209,7 @@ async def update_neuro_type(callback : CallbackQuery, state: FSMContext):
     else:
         data = await state.get_data()
         network_id = data["network_id"]
-        await rq.update_network_type(network_id, int(neyro_type_id.group()))
+        await rq.update_neuro_type(network_id, int(neyro_type_id.group()))
         await state.clear()
         await callback.message.answer('Тип успішно оновлено')
 
@@ -222,7 +222,7 @@ async def update_neuro_type_create(message: Message, state: FSMContext):
     data = await state.get_data()
     network_id = data["network_id"]
     new_type_id = await rq.write_neuro_type_to_DB(new_type)
-    await rq.update_network_type(network_id, new_type_id)
+    await rq.update_neuro_type(network_id, new_type_id)
     await state.clear()
     await message.answer('Тип успішно створено і оновлено')
 #===========================
@@ -239,7 +239,7 @@ async def get_new_neuro_video_tutorial(callback : CallbackQuery, state : FSMCont
 async def set_new_neuro_video_tutorial(message : Message, state : FSMContext):    
     data = await state.get_data()
     network_id = data["network_id"]
-    await rq.update_network_video_tutorial(network_id, message.text)
+    await rq.update_neuro_video_tutorial(network_id, message.text)
     await state.clear()
     await message.answer("Відео-тутор оновлено")
 #===========================
@@ -256,7 +256,7 @@ async def get_new_neuro_message_ref(callback : CallbackQuery, state : FSMContext
 async def set_new_neuro_message_ref(message : Message, state : FSMContext):    
     data = await state.get_data()
     network_id = data["network_id"]
-    await rq.update_network_message_ref(network_id, message.text)
+    await rq.update_neuro_message_ref(network_id, message.text)
     await state.clear()
     await message.answer("Повідомлення оновлено")
 #===========================
@@ -273,7 +273,7 @@ async def get_new_neuro_ref(callback : CallbackQuery, state : FSMContext):
 async def set_new_neuro_ref(message : Message, state : FSMContext):    
     data = await state.get_data()
     network_id = data["network_id"]
-    await rq.update_network_neuro_ref(network_id, message.text)
+    await rq.update_neuro_ref(network_id, message.text)
     await state.clear()
     await message.answer("Посилання на нейронку оновлено")
 #===========================
@@ -297,7 +297,7 @@ async def set_new_neuro_available(message: Message, state: FSMContext):
 
     data = await state.get_data()
     network_id = data["network_id"]
-    await rq.update_network_is_available(network_id, is_available)
+    await rq.update_neuro_is_available(network_id, is_available)
     await message.answer('Доступ до читання оновлено')
 #===========================
 
@@ -323,7 +323,7 @@ async def delete_neuro_type(message : Message, state :FSMContext):
     message_answer = message.text.strip().lower()
     if message_answer == 'так':
         data = await state.get_data()
-        await rq.delete_type(data["delete_neuro_type"])
+        await rq.delete_neuro_type(data["delete_neuro_type"])
         await message.answer('Тип видалено')
     elif message_answer == 'ні':
         await message.answer('Видалення типу скасовано')
@@ -352,7 +352,7 @@ async def delete_neuro_type(message : Message, state :FSMContext):
     message_answer = message.text.strip().lower()
     if message_answer == 'так':
         data = await state.get_data()
-        await rq.delete_network(data["delete_neuro"])
+        await rq.delete_neuro(data["delete_neuro"])
         await message.answer('Нейронку видалено')
     elif message_answer == 'ні':
         await message.answer('Видалення нейронки скасовано')

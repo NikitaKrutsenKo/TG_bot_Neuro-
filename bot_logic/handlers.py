@@ -67,7 +67,7 @@ async def show_neyro_types(callback : CallbackQuery):
 @router.callback_query(F.data.startswith('network_'))
 async def show_neural_network_info(callback: CallbackQuery):
     neural_network_id = int(re.search(r'\d+', callback.data).group())
-    neural_network = await rq.get_network_by_id(neural_network_id)
+    neural_network = await rq.get_neuro_by_id(neural_network_id)
     if neural_network:
         await callback.answer(None)
         await callback.message.answer(info_message_for_network(neural_network),  parse_mode='Markdown')

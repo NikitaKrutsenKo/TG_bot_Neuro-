@@ -1,6 +1,6 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
-from bot_logic.database.requests import get_neuro_types, get_networks_by_type
+from bot_logic.database.requests import get_neuro_types, get_neuro_by_type
 
 main_features_keyboard = ReplyKeyboardMarkup(keyboard=
         [[KeyboardButton(text='Навігатор')], [KeyboardButton(text='Профіль')]],        
@@ -19,7 +19,7 @@ async def neuro_types_keyboard():
 
 
 async def networks_by_type_keyboard(neuro_type: int):
-    all_networks = await get_networks_by_type(neuro_type)
+    all_networks = await get_neuro_by_type(neuro_type)
     keyboard = InlineKeyboardBuilder()
     for n in all_networks:
         if n.is_available == True:

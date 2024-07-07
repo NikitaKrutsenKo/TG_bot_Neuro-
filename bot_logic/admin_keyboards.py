@@ -22,14 +22,14 @@ async def delete_neuro_type_keyboard():
 
 
 async def update_neuro_networks_keyboard():
-    all_networks = await rq.get_all_networks()
+    all_networks = await rq.get_all_neuro()
     keyboard = InlineKeyboardBuilder()
     for n in all_networks:
         keyboard.add(InlineKeyboardButton(text=n.name, callback_data=f"start_update_neuro_{n.id}"))
     return keyboard.adjust(1).as_markup()
 
 async def delete_neuro_networks_keyboard():
-    all_networks = await rq.get_all_networks()
+    all_networks = await rq.get_all_neuro()
     keyboard = InlineKeyboardBuilder()
     for n in all_networks:
         keyboard.add(InlineKeyboardButton(text=n.name, callback_data=f"delete_neuro_network_{n.id}"))
