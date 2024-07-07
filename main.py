@@ -5,6 +5,9 @@ from bot_logic import handlers, admin_handlers
 from bot_logic.database.models import async_db_create
 
 from globals import TOKEN
+from keep_alive import keep_alive
+
+keep_alive()
 
 
 async def main():
