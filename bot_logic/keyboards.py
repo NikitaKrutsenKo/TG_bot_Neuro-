@@ -22,7 +22,8 @@ async def networks_by_type_keyboard(neuro_type: int):
     all_networks = await get_networks_by_type(neuro_type)
     keyboard = InlineKeyboardBuilder()
     for n in all_networks:
-        keyboard.add(InlineKeyboardButton(text=n.name, callback_data=f"network_{n.id}"))
+        if n.is_available == True:
+            keyboard.add(InlineKeyboardButton(text=n.name, callback_data=f"network_{n.id}"))
     return keyboard.adjust(2).as_markup()
 
 #===============================================================
