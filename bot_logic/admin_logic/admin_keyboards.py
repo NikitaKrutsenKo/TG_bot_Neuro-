@@ -1,7 +1,53 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
+from aiogram.utils.keyboard import InlineKeyboardBuilder, ReplyKeyboardBuilder
 import bot_logic.database.requests as rq 
 import bot_logic.database.models as models
+from bot_logic.keyboards import user_features_list
+
+
+#=============================================================
+
+async def create_admin_feature_keyboard():
+    keyboard = ReplyKeyboardBuilder()
+    
+    for item in user_features_list:
+        keyboard.add(KeyboardButton(text=item))
+    
+    for item in admin_features_list:
+        keyboard.add(KeyboardButton(text=item))
+
+    ready_keyboard = keyboard.adjust(2).as_markup()
+    ready_keyboard.input_field_placeholder = 'Оберіть задачу'
+    ready_keyboard.resize_keyboard = True
+    return ready_keyboard
+
+
+async def admin_commands_keyboard():
+    keyboard = ReplyKeyboardBuilder()
+    for c in admin_commands_list:
+        keyboard.add(KeyboardButton(text=c))
+    keyboard.add(KeyboardButton(text='На головну'))
+
+    ready_keyboard = keyboard.adjust(2).as_markup()
+    ready_keyboard.input_field_placeholder = 'Оберіть задачу'
+    ready_keyboard.resize_keyboard = True
+    return ready_keyboard
+
+
+admin_features_list = {
+    'Команди' : admin_commands_keyboard
+}
+
+admin_commands_list = {
+    '/add_new_neuro' : 'додати нову нейронку',
+    '/edit_neuro' : 'змінити якусь конкретну нейронку',
+    '/delete_neuro_type' : 'видалити тип нейронки',
+    '/delete_neuro' : 'видалити конкретну нейронку'
+}
+
+#=============================================================
+
 
 
 async def choose_neuro_types_keyboard():

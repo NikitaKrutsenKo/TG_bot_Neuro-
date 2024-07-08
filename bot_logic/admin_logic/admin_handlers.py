@@ -4,12 +4,11 @@ from aiogram.filters import Command, BaseFilter
 from aiogram.fsm.context import FSMContext
 
 from bot_logic.database.models import async_session, NeuroType, NeuralNetwork
-import bot_logic.admin_keyboards as admin_keyboards
-import bot_logic.admin_states as admin_states 
+import bot_logic.admin_logic.admin_keyboards as admin_keyboards
+import bot_logic.admin_logic.admin_states as admin_states 
 import bot_logic.database.requests as rq
 
 import re
-
 
 
 admin_router = Router()
@@ -27,14 +26,32 @@ class AdminFilter(BaseFilter):
         return False
 
 
+async def show_admin_commands() -> str:
+    result = []
+    for key, value in admin_keyboards.admin_commands_list.items():
+        if value is not None:
+            result.append(f"{key} : {value}\n")
+    text = "\n".join(result)
+    return text
+
+
 @admin_router.message(Command('start_admin'), AdminFilter())
-async def help_admin(message: Message):
+async def start_admin(message: Message):
     await message.reply(
     'Адмін-панель до ваших послуг, ' + message.from_user.full_name + '\n' +
-    '/add_new_neuro - додати нову нейронку\n' + 
-    '/edit_neuro - змінити якусь конкретну нейронку\n' +
-    '/delete_neuro_type - видалити тип нейронки\n' +
-    '/delete_neuro - видалити конкретну нейронку\n')
+    await show_admin_commands(), reply_markup= await admin_keyboards.create_admin_feature_keyboard())
+
+
+@admin_router.message(lambda message: message.text in admin_keyboards.admin_features_list, AdminFilter())
+async def show_admin_keyboard(message :Message):
+    feature = admin_keyboards.admin_features_list.get(message.text, None)
+    await message.answer('Оберіть пункт з клавіатури ', reply_markup= await feature())
+
+
+@admin_router.message(F.text == 'На головну', AdminFilter())
+async def return_to_main_page(message : Message):
+    await message.reply(
+    'Повертаємось на головну клавіатуру', reply_markup= await admin_keyboards.create_admin_feature_keyboard())
 
 
 #=============================================================== Процес створення нової нейронки
@@ -126,17 +143,16 @@ async def neuro_is_available_added(message: Message, state: FSMContext):
     
 
 async def create_neuro_with_user_info(state: FSMContext):
-    async with async_session() as session:
-        data = await state.get_data()
-        new_neuro = NeuralNetwork(
-        name=data["name"],
-        description=data["description"],
-        neuro_type=data["neuro_type"],
-        neuro_video_tutorial=data["neuro_video_tutorial"],
-        neuro_message_ref=data["neuro_message_ref"],
-        neuro_ref = data["neuro_ref"],
-        is_available=data["is_available"])
-        await rq.write_neuro_to_DB(new_neuro)
+    data = await state.get_data()
+    new_neuro = NeuralNetwork(
+    name=data["name"],
+    description=data["description"],
+    neuro_type=data["neuro_type"],
+    neuro_video_tutorial=data["neuro_video_tutorial"],
+    neuro_message_ref=data["neuro_message_ref"],
+    neuro_ref = data["neuro_ref"],
+    is_available=data["is_available"])
+    await rq.write_neuro_to_DB(new_neuro)
 
 #===============================================================
 

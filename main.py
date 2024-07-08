@@ -1,7 +1,8 @@
 import asyncio
 from aiogram import Bot, Dispatcher
 
-from bot_logic import handlers, admin_handlers
+from bot_logic import handlers
+from bot_logic.admin_logic import admin_handlers
 from bot_logic.database.models import async_db_create
 
 from globals import TOKEN

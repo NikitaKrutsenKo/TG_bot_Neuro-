@@ -6,6 +6,7 @@ import bot_logic.keyboards as kb
 import bot_logic.database.requests as rq
 import bot_logic.database.models as models
 import bot_logic.user_states as user_states
+
 from aiogram.fsm.context import FSMContext
 
 from globals import TOKEN
@@ -34,15 +35,16 @@ async def validate_password_admin(message : Message, state : FSMContext):
 
 @router.message(Command('start'))
 async def send_welcome(message: Message):
+    main_features_kb = await kb.create_user_feature_keyboard()
     await rq.set_user(message.from_user.id)
-    await message.reply("Доброї днини, пункти головного меню перед вами " + "\nякщо ви адмін, то пропишіть:\n /start_admin", 
-    reply_markup = kb.main_features_keyboard)
+    await message.reply("Доброї днини, пункти головного меню перед вами\nякщо ви адмін, напишіть /start_admin ", 
+    reply_markup = main_features_kb)
 
 
 #===============================================================Пункти головного меню
-@router.message(lambda message: message.text in kb.main_features_list)
+@router.message(lambda message: message.text in kb.user_features_list)
 async def features_list(message: Message):
-    feature = kb.main_features_list.get(message.text, None)
+    feature = kb.user_features_list.get(message.text, None)
     if feature:
         await message.answer(' Ви обрали ' + message.text, reply_markup = await feature())
     else:
