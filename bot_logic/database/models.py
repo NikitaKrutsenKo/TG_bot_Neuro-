@@ -1,4 +1,4 @@
-from sqlalchemy import String, ForeignKey, BigInteger, Boolean, DateTime
+from sqlalchemy import String, ForeignKey, BigInteger, SmallInteger, Boolean, DateTime
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from sqlalchemy.ext.asyncio import AsyncAttrs, async_sessionmaker, create_async_engine
 from datetime import datetime
@@ -17,6 +17,7 @@ class User(Base):
 
     id : Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     telegram_id : Mapped[int] = mapped_column(BigInteger)
+    boost_number : Mapped[int] = mapped_column(SmallInteger) # потрібно буде для рефералів
     premium_expiration_date : Mapped[datetime] = mapped_column(DateTime, nullable=True)
     is_bot_admin : Mapped[bool] = mapped_column(Boolean)   
 

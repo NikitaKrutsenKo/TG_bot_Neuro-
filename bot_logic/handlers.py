@@ -85,20 +85,24 @@ def info_message_for_network(neural_network : models.NeuralNetwork) -> str:
     neuro_ref = neural_network.neuro_ref
     neuro_vid_tutorial = neural_network.neuro_video_tutorial
     neuro_message_ref = neural_network.neuro_message_ref
+    neuro_message_ref_full = None
+
+    if neuro_message_ref:
+        neuro_message_ref_full = '(' + neuro_message_ref + ')'
 
     part_name = {
-    '#Назва' : name,
-    '#Опис' : description,    
-    '#Відео' : neuro_vid_tutorial, 
-    '#Деталі \n Інші цікаві штуки можна почитати [тут]' : neuro_message_ref,
-    '#Посилання' : neuro_ref,
+    '#Назва \n' : name,
+    '#Опис  \n' : description,    
+    '#Відео  \n' : neuro_vid_tutorial, 
+    '#Деталі \n Інші цікаві штуки можна почитати [тут]' : neuro_message_ref_full,
+    '#Посилання \n' : neuro_ref,
     }
 
     result_lines = []
 
     for key, value in part_name.items():
         if value is not None:
-            result_lines.append(f"{key}\n{value}\n")
+            result_lines.append(f"{key}{value}\n")
 
     result_string = "\n".join(result_lines)
 

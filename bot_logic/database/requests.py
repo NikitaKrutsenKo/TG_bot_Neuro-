@@ -10,7 +10,7 @@ async def set_user(telegram_id: int):
             user = await session.scalar(select(User).where(User.telegram_id == telegram_id))
 
             if not user:
-                new_user = User(telegram_id=telegram_id, premium_expiration_date=None, is_bot_admin=False)
+                new_user = User(telegram_id=telegram_id, premium_expiration_date=None, is_bot_admin=False, boost_number=0)
                 session.add(new_user)
                 await session.commit()
 
