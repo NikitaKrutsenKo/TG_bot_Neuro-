@@ -66,6 +66,28 @@ async def get_neuro_by_id(neuro_id: int):
         .where(NeuralNetwork.id == neuro_id and NeuralNetwork.is_available))
 
         return neural_network
+    
+
+async def check_neuro_exist(neuro_id: int) -> bool:
+    async with async_session() as session:
+        
+        neural_network = await session.scalar(select(NeuralNetwork)
+        .where(NeuralNetwork.id == neuro_id))
+        neuro_exist = False
+        if neural_network:
+            neuro_exist = True
+        return neuro_exist
+
+
+async def check_neuro_type_exist(neuro_type_id: int) -> bool:
+    async with async_session() as session:
+        
+        neuro_type = await session.scalar(select(NeuroType)
+        .where(NeuroType.id == neuro_type_id))
+        neuro_type_exist = False
+        if neuro_type:
+            neuro_type_exist = True
+        return neuro_type_exist
 #===============================================================
 
 #=============================================================== Нейронки запис у БД
