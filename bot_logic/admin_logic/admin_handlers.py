@@ -405,7 +405,6 @@ async def confirm_neuro_type_delete(callback : CallbackQuery, state : FSMContext
             await state.update_data(delete_neuro_type = neuro_type_id)
             await state.set_state(admin_states.DelteNeuroType.confirm_neuro_type_delete)
             await callback.message.answer('Напишіть \'так\', щоб підтвердити видалення, або \'ні\', щоб скасувати')
-            await callback.message.answer('Схоже, цей тип вже було видалено раніше')
         else:
             await callback.message.answer('Схоже, цей тип вже було видалено раніше')
     except Exception as e:
