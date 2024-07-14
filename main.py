@@ -6,7 +6,24 @@ from bot_logic.admin_logic import admin_handlers
 from bot_logic.database.models import async_db_create
 
 from globals import TOKEN
-from keep_alive import keep_alive
+
+from flask import Flask
+from threading import Thread
+
+app = Flask(__name__)
+
+@app.route('/')
+def index():
+    return "Alive"
+
+
+def run():
+    app.run(host='0.0.0.0', port=8080)
+
+
+def keep_alive():
+    t = Thread(target=run)
+    t.start()
 
 
 keep_alive()
