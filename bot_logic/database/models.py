@@ -9,10 +9,13 @@ DATABASE_URL = f'mysql+aiomysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{D
 
 engine = create_async_engine(url=DATABASE_URL)
 
+
 async_session = async_sessionmaker(engine)
+
 
 class Base(AsyncAttrs, DeclarativeBase):
     pass
+
 
 # модель користувача застосунку
 class User(Base):
