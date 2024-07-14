@@ -2,9 +2,12 @@ from sqlalchemy import String, ForeignKey, BigInteger, SmallInteger, Boolean, Da
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from sqlalchemy.ext.asyncio import AsyncAttrs, async_sessionmaker, create_async_engine
 from datetime import datetime
+from globals import DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_NAME
+
+DATABASE_URL = f'mysql+aiomysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}'
 
 
-engine = create_async_engine(url='sqlite+aiosqlite:///db.sqlite3')
+engine = create_async_engine(url=DATABASE_URL)
 
 async_session = async_sessionmaker(engine)
 
